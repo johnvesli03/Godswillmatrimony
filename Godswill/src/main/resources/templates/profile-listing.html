@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+    <title>Browse Profiles - Matrimony</title>
+</head>
+<body th:attr="data-logged-in=${session.user != null}">
+<!-- Header -->
+<th:block th:replace="~{fragments/header :: navbar}"></th:block>
+
+<!-- Profile Listing Header -->
+<div class="profile-listing-header">
+    <div class="container">
+        <h1>Browse Profiles</h1>
+        <p>Find your perfect match from thousands of verified profiles</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="main-layout">
+        <!-- Left Sidebar -->
+        <th:block th:replace="~{fragments/sidebar :: sidebar}"></th:block>
+
+        <!-- Main Content -->
+        <main class="profile-listing-content">
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <form id="filterForm">
+                    <div class="filter-options">
+                        <div class="filter-group">
+                            <label for="gender">Looking for:</label>
+                            <select id="gender" name="gender" class="form-control">
+                                <option value="">All</option>
+                                <option value="male" th:selected="${param.gender != null && param.gender[0] == 'male'}">Groom</option>
+                                <option value="female" th:selected="${param.gender != null && param.gender[0] == 'female'}">Bride</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="religion">Religion:</label>
+                            <select id="religion" name="religion" class="form-control">
+                                <option value="">All Religions</option>
+                                <option value="hindu" th:selected="${param.religion != null && param.religion[0] == 'hindu'}">Hindu</option>
+                                <option value="muslim" th:selected="${param.religion != null && param.religion[0] == 'muslim'}">Muslim</option>
+                                <option value="christian" th:selected="${param.religion != null && param.religion[0] == 'christian'}">Christian</option>
+                                <option value="sikh" th:selected="${param.religion != null && param.religion[0] == 'sikh'}">Sikh</option>
+                                <option value="buddhist" th:selected="${param.religion != null && param.religion[0] == 'buddhist'}">Buddhist</option>
+                                <option value="jain" th:selected="${param.religion != null && param.religion[0] == 'jain'}">Jain</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="ageFrom">Age:</label>
+                            <select id="ageFrom" name="ageFrom" class="form-control">
+                                <option value="">From</option>
+                                <option th:each="age : ${#numbers.sequence(18, 60)}"
+                                        th:value="${age}"
+                                        th:text="${age}"
+                                        th:selected="${param.ageFrom != null && param.ageFrom[0] == #strings.toString(age)}">18</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <select id="ageTo" name="ageTo" class="form-control">
+                                <option value="">To</option>
+                                <option th:each="age : ${#numbers.sequence(18, 60)}"
+                                        th:value="${age}"
+                                        th:text="${age}"
+                                        th:selected="${param.ageTo != null && param.ageTo[0] == #strings.toString(age)}">60</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="maritalStatus">Marital Status:</label>
+                            <select id="maritalStatus" name="maritalStatus" class="form-control">
+                                <option value="">All</option>
+                                <option value="never_married" th:selected="${param.maritalStatus != null && param.maritalStatus[0] == 'never_married'}">Never Married</option>
+                                <option value="divorced" th:selected="${param.maritalStatus != null && param.maritalStatus[0] == 'divorced'}">Divorced</option>
+                                <option value="widowed" th:selected="${param.maritalStatus != null && param.maritalStatus[0] == 'widowed'}">Widowed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="education">Education:</label>
+                            <select id="education" name="education" class="form-control">
+                                <option value="">All</option>
+                                <option value="high_school" th:selected="${param.education != null && param.education[0] == 'high_school'}">High School</option>
+                                <option value="diploma" th:selected="${param.education != null && param.education[0] == 'diploma'}">Diploma</option>
+                                <option value="bachelors" th:selected="${param.education != null && param.education[0] == 'bachelors'}">Bachelor's</option>
+                                <option value="masters" th:selected="${param.education != null && param.education[0] == 'masters'}">Master's</option>
+                                <option value="doctorate" th:selected="${param.education != null && param.education[0] == 'doctorate'}">Doctorate</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" name="location" class="form-control"
+                                   placeholder="City, State" th:value="${param.location != null ? param.location[0] : ''}">
+                        </div>
+
+                        <div class="filter-checkbox">
+                            <input type="checkbox" id="verifiedOnly" name="verified" value="true"
+                                   th:checked="${param.verified != null && param.verified[0] == 'true'}">
+                            <label for="verifiedOnly">Verified Profiles Only</label>
+                        </div>
+
+                        <button type="button" id="resetFilters" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="filter-bar" style="margin-top: 20px;">
+                <div class="filter-options">
+                    <div class="filter-group" style="flex: 1;">
+                        <input type="text" id="profileSearch" class="form-control"
+                               placeholder="Search by name, profession, location..."
+                               th:value="${param.q != null ? param.q[0] : ''}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Info and Sorting -->
+            <div class="listing-results-info">
+                    <span class="results-count" th:text="${profiles != null ? profiles.size() : 0} + ' profile(s) found'">
+                        0 profiles found
+                    </span>
+                <div class="sort-options">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy" class="form-control">
+                        <option value="recent" th:selected="${param.sort != null && param.sort[0] == 'recent'}">Recently Added</option>
+                        <option value="age_asc" th:selected="${param.sort != null && param.sort[0] == 'age_asc'}">Age: Low to High</option>
+                        <option value="age_desc" th:selected="${param.sort != null && param.sort[0] == 'age_desc'}">Age: High to Low</option>
+                        <option value="popular" th:selected="${param.sort != null && param.sort[0] == 'popular'}">Most Popular</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Profile Grid -->
+            <div class="profile-grid">
+                <!-- Profile Card -->
+                <div class="card profile-card" th:each="profile : ${profiles}">
+                    <div class="profile-card-image">
+                        <img th:src="${profile.imageUrl} ?: '/images/default-avatar.jpg'"
+                             th:alt="${profile.name}">
+                        <div class="profile-verified" th:if="${profile.verified}">
+                            <span class="verified-badge">Verified</span>
+                        </div>
+                    </div>
+                    <div class="profile-card-content">
+                        <h3 th:text="${profile.name} + ', ' + ${profile.age}">Name, 28</h3>
+                        <div class="profile-info">
+                            <div class="profile-info-item">
+                                <i class="fas fa-pray"></i>
+                                <span th:text="${profile.religion}">Hindu</span>
+                            </div>
+                            <div class="profile-info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${profile.city + ', ' + profile.state}">Mumbai, Maharashtra</span>
+                            </div>
+                            <div class="profile-info-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span th:text="${profile.education}">Bachelor's Degree</span>
+                            </div>
+                            <div class="profile-info-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span th:text="${profile.profession}">Software Engineer</span>
+                            </div>
+                            <div class="profile-info-item" th:if="${profile.height}">
+                                <i class="fas fa-ruler-vertical"></i>
+                                <span th:text="${profile.height} + ' cm'">170 cm</span>
+                            </div>
+                            <div class="profile-info-item">
+                                <i class="fas fa-ring"></i>
+                                <span th:text="${profile.maritalStatus}">Never Married</span>
+                            </div>
+                        </div>
+                        <div class="profile-card-actions">
+                            <a th:href="@{/profile/{id}(id=${profile.id})}"
+                               class="btn btn-primary btn-view-profile"
+                               th:attr="data-profile-id=${profile.id}">
+                                <i class="fas fa-eye"></i> View Profile
+                            </a>
+                            <button class="btn btn-outline btn-shortlist"
+                                    th:attr="data-profile-id=${profile.id}"
+                                    th:classappend="${profile.shortlisted} ? 'shortlisted' : ''">
+                                <i class="fas fa-heart"></i>
+                                <span th:text="${profile.shortlisted} ? 'Shortlisted' : 'Shortlist'">Shortlist</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Results Message -->
+                <div class="no-results" th:if="${profiles == null || profiles.isEmpty()}">
+                    <div class="no-results-icon">😔</div>
+                    <h3>No profiles found</h3>
+                    <p>Try adjusting your filters or search criteria</p>
+                    <button type="button" id="resetAllFilters" class="btn btn-primary">
+                        <i class="fas fa-redo"></i> Reset All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" th:if="${totalPages > 1}">
+                <a th:href="@{/profiles(page=${currentPage - 1})}"
+                   class="pagination-link"
+                   th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+
+                <span class="pagination-info">
+                        Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">10</span>
+                    </span>
+
+                <a th:href="@{/profiles(page=${currentPage + 1})}"
+                   class="pagination-link"
+                   th:classappend="${currentPage >= totalPages - 1} ? 'disabled' : ''">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Footer -->
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+<script>
+    document.getElementById('resetAllFilters').addEventListener('click', function() {
+        window.location.href = '/profiles';
+    });
+</script>
+</body>
+</html>
