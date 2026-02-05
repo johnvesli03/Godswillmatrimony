@@ -142,7 +142,7 @@ public class DataInitializer implements CommandLineRunner {
         story1.setStory("We found each other through this wonderful platform.");
         story1.setMarriageDate(LocalDate.of(2024, 1, 15));
         story1.setLocation("Mumbai, India");
-        story1.setImageUrl("/images/couple1.jpg");
+        story1.setImageUrl("/images/cpl_1.jpg");
         story1.onCreate();
 
         SuccessStory story2 = new SuccessStory();
@@ -150,7 +150,7 @@ public class DataInitializer implements CommandLineRunner {
         story2.setStory("The platform made it easy to connect.");
         story2.setMarriageDate(LocalDate.of(2023, 11, 20));
         story2.setLocation("Bangalore, India");
-        story2.setImageUrl("/images/couple2.jpg");
+        story2.setImageUrl("/images/cpl_2.jpg");
         story2.onCreate();
 
         successStoryRepository.saveAll(Arrays.asList(story1, story2));
