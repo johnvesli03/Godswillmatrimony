@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+    <title>Register - Matrimony</title>
+    <style>
+        .registration-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .registration-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ddd;
+            z-index: 0;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+        .step.active .step-number {
+            background: #c41e3a;
+            color: white;
+        }
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .form-section h3 {
+            color: #c41e3a;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<th:block th:replace="~{fragments/header :: navbar}"></th:block>
+
+<!-- Registration Page -->
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-logo">💑</div>
+            <h2>Create Your Account</h2>
+            <p>Complete all details to find your perfect life partner</p>
+        </div>
+
+        <!-- Registration Steps -->
+        <div class="registration-steps">
+            <div class="step active" id="step-1">
+                <div class="step-number">1</div>
+                <p>Basic Info</p>
+            </div>
+            <div class="step" id="step-2">
+                <div class="step-number">2</div>
+                <p>Personal</p>
+            </div>
+            <div class="step" id="step-3">
+                <div class="step-number">3</div>
+                <p>Religious</p>
+            </div>
+            <div class="step" id="step-4">
+                <div class="step-number">4</div>
+                <p>Professional</p>
+            </div>
+            <div class="step" id="step-5">
+                <div class="step-number">5</div>
+                <p>About You</p>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+        <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+
+        <!-- Registration Form -->
+        <form class="auth-form registration-form" th:action="@{/register}" method="post" id="registrationForm">
+
+            <!-- STEP 1: BASIC INFORMATION -->
+            <div class="form-section active" id="section-1">
+                <h3>Step 1: Basic Information</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control"
+                               required th:value="${user?.firstName}">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" class="form-control"
+                               required th:value="${user?.lastName}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-control"
+                           required th:value="${user?.email}">
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="phone">Mobile Number *</label>
+                    <input type="tel" id="phone" name="phone" class="form-control"
+                           placeholder="10-digit mobile number" required th:value="${user?.phone}">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender">Profile For *</label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="">Select</option>
+                            <option value="Male" th:selected="${user?.gender == 'Male'}">Groom</option>
+                            <option value="Female" th:selected="${user?.gender == 'Female'}">Bride</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth *</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control"
+                               required th:value="${user?.dateOfBirth}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PERSONAL DETAILS -->
+            <div class="form-section" id="section-2">
+                <h3>Step 2: Personal Details</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age">Age *</label>
+                        <input type="number" id="age" name="age" class="form-control"
+                               min="18" max="80" required th:value="${profile?.age}">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height *</label>
+                        <input type="text" id="height" name="height" class="form-control"
+                               placeholder="e.g., 5 feet 10 inches" required th:value="${profile?.height}">
+                    </div>
+                </div>
+                <!-- Rest of the form -->
+            </div>
+
+            <!-- STEP 3: RELIGIOUS DETAILS -->
+            <div class="form-section" id="section-3">
+                <h3>Step 3: Religious &amp; Community Details</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="religion">Religion *</label>
+                        <select id="religion" name="religion" class="form-control" required>
+                            <option value="">Select Religion</option>
+                            <option value="Hindu" th:selected="${profile?.religion == 'Hindu'}">Hindu</option>
+                            <option value="Muslim" th:selected="${profile?.religion == 'Muslim'}">Muslim</option>
+                            <option value="Christian" th:selected="${profile?.religion == 'Christian'}">Christian</option>
+                            <option value="Sikh" th:selected="${profile?.religion == 'Sikh'}">Sikh</option>
+                            <option value="Buddhist" th:selected="${profile?.religion == 'Buddhist'}">Buddhist</option>
+                            <option value="Jain" th:selected="${profile?.religion == 'Jain'}">Jain</option>
+                            <option value="Other" th:selected="${profile?.religion == 'Other'}">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="caste">Caste</label>
+                        <input type="text" id="caste" name="caste" class="form-control"
+                               placeholder="Optional" th:value="${profile?.caste}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="motherTongue">Mother Tongue *</label>
+                    <input type="text" id="motherTongue" name="motherTongue" class="form-control"
+                           placeholder="e.g., Hindi, Telugu, Tamil" required th:value="${profile?.motherTongue}">
+                </div>
+            </div>
+
+            <!-- STEP 4: PROFESSIONAL DETAILS -->
+            <div class="form-section" id="section-4">
+                <h3>Step 4: Professional Details</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="education">Education *</label>
+                        <select id="education" name="education" class="form-control" required>
+                            <option value="">Select Education Level</option>
+                            <option value="High School" th:selected="${profile?.education == 'High School'}">High School</option>
+                            <option value="Bachelor" th:selected="${profile?.education == 'Bachelor'}">Bachelor</option>
+                            <option value="Master" th:selected="${profile?.education == 'Master'}">Master</option>
+                            <option value="PhD" th:selected="${profile?.education == 'PhD'}">PhD</option>
+                            <option value="Professional" th:selected="${profile?.education == 'Professional'}">Professional</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation">Occupation *</label>
+                        <input type="text" id="occupation" name="occupation" class="form-control"
+                               placeholder="Your profession" required th:value="${profile?.occupation}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" class="form-control"
+                               placeholder="Where do you live?" required th:value="${profile?.city}">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State *</label>
+                        <input type="text" id="state" name="state" class="form-control"
+                               placeholder="State" required th:value="${profile?.state}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="employedIn">Employed In</label>
+                    <input type="text" id="employedIn" name="employedIn" class="form-control"
+                           placeholder="Company or Organization" th:value="${profile?.employedIn}">
+                </div>
+            </div>
+
+            <!-- STEP 5: ABOUT YOU -->
+            <div class="form-section" id="section-5">
+                <h3>Step 5: About You &amp; Password</h3>
+
+                <div class="form-group form-group-full">
+                    <label for="bio">About Yourself *</label>
+                    <textarea id="bio" name="bio" class="form-control" rows="4"
+                              placeholder="Tell us about yourself (Max 500 characters)" required th:text="${profile?.bio}"></textarea>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="password">Password *</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" name="password" class="form-control"
+                               placeholder="Min. 8 characters" required minlength="8">
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                               class="form-control" placeholder="Confirm password" required minlength="8">
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-terms">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms" style="display: inline; margin-left: 5px;">
+                        I agree to the <a th:href="@{/terms}">Terms of Service</a> and
+                        <a th:href="@{/privacy}">Privacy Policy</a> *
+                    </label>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation" style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">
+                    ← Previous
+                </button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                    Next →
+                </button>
+                <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                    <i class="fas fa-check"></i> Create Account
+                </button>
+            </div>
+        </form>
+
+        <div class="auth-footer" style="margin-top: 30px;">
+            Already have an account?
+            <a th:href="@{/login}">Login here</a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function showStep(step) {
+        // Hide all sections
+        for (let i = 1; i <= totalSteps; i++) {
+            document.getElementById(`section-${i}`).classList.remove('active');
+            document.getElementById(`step-${i}`).classList.remove('active');
+        }
+
+        // Show current section and step
+        document.getElementById(`section-${step}`).classList.add('active');
+        document.getElementById(`step-${step}`).classList.add('active');
+
+        // Update button visibility
+        document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
+        document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
+
+        // Update step indicators
+        for (let i = 1; i < step; i++) {
+            document.getElementById(`step-${i}`).classList.add('completed');
+        }
+    }
+
+    function nextStep() {
+        if (validateStep(currentStep)) {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                window.scrollTo(0, 0);
+            }
+        }
+    }
+
+    function previousStep() {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function validateStep(step) {
+        const requiredFields = document.querySelectorAll(`#section-${step} [required]`);
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            alert('Please fill in all required fields');
+        }
+
+        return isValid;
+    }
+
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const button = event.currentTarget;
+        const icon = button.querySelector('i');
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // Form submission
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate all steps
+        for (let i = 1; i <= totalSteps; i++) {
+            if (!validateStep(i)) {
+                currentStep = i;
+                showStep(currentStep);
+                window.scrollTo(0, 0);
+                return;
+            }
+        }
+
+        // Check password match
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        // Check terms agreement
+        if (!document.getElementById('agreeTerms').checked) {
+            alert('Please agree to the terms and conditions');
+            return;
+        }
+
+        // Submit form
+        this.submit();
+    });
+
+    // Initialize
+    showStep(1);
+</script>
+</body>
+</html>

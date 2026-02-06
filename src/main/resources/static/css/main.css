@@ -1,0 +1,383 @@
+/* ============================================
+   RESET AND BASE STYLES
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #e91e63;
+    --secondary-color: #9c27b0;
+    --violet-brand: #5e2d89; /* GVM Branding Violet */
+    --accent-color: #ff4081;
+    --text-dark: #333;
+    --text-light: #666;
+    --bg-light: #f5f5f5;
+    --white: #ffffff;
+    --success: #4caf50;
+    --verified-badge: #2196f3;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--violet-brand);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+/* ============================================
+   MAIN HEADER WITH BACKGROUND IMAGE + GRADIENT
+   ============================================ */
+.main-header {
+    min-height: 100px;                 /* visible height */
+    display: flex;
+    align-items: center;
+
+    background-image:
+        linear-gradient(
+            rgba(239, 196, 209, 0.45),
+            rgba(239, 196, 209, 0.75)
+        ),
+        url("/images/GVM_Background.png");
+
+    background-size: cover;
+    background-position: 50% center;
+    background-repeat: no-repeat;
+
+    box-shadow: var(--shadow);
+    top: 0;
+    z-index: 9999;
+}
+
+/* Navbar spacing fix */
+.main-header .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;     /* increases header height */
+}
+
+
+.navbar a {
+    color: #000;
+    font-weight: 700;
+    text-shadow: 0 2px 6px rgba(255,255,255,0.8);
+
+}
+
+
+/* Current page highlight */
+.nav-links a.active {
+    background-color: var(--violet-brand); /* GVM brand violet */
+    color: var(--white);                   /* White text */
+    font-weight: 700;                      /* Bold text */
+    border-radius: 4px;                    /* Rounded corners */
+    transition: all 0.3s ease;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.navbar-logo {
+    height: 65px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    color: var(--violet-brand);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 0.5px;
+}
+
+.brand-tagline {
+    color: var(--secondary-color);
+    font-size: 11px;
+    font-weight: 600;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    align-items: center;
+    padding-left:50px;
+}
+
+.nav-links a {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: var(--bg-light);
+    color: var(--violet-brand);
+}
+
+.nav-links .btn-login {
+    background-color: var(--white);
+    border: 2px solid var(--violet-brand);
+    color: var(--violet-brand);
+}
+
+.nav-links .btn-register {
+    background-color: #667eea;
+    color: var(--white);
+}
+
+/* ============================================
+   PROFILE CARD & GRID (FIXED CROP)
+   ============================================ */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+.profile-card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Fix for Decapitation: Anchors the crop to the top 10% of the image */
+.profile-card img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    object-position: center 10%;
+}
+
+.profile-info {
+    padding: 15px;
+    flex-grow: 1;
+}
+
+.profile-info h3 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.profile-info p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* VIEW PROFILE BUTTON STYLES */
+.btn-view-profile {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #667eea;
+    color: var(--white);
+    text-align: center;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-view-profile:hover {
+    color: #ffffff;
+    background-color: var(--violet-brand);
+}
+
+/* ============================================
+   FORMS & RESET BUTTON
+   ============================================ */
+.btn-reset {
+    padding: 10px 20px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-reset:hover {
+    background-color: #f5c6cb;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--violet-brand);
+}
+
+/* ============================================
+   FOOTER (UPDATED LAYOUT)
+   ============================================ */
+.footer {
+    background-color: #222; /* Darker background for professional look */
+    color: var(--white);
+    padding: 60px 0 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--white);
+}
+
+.footer-section p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.6;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #ccc;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--violet-brand);
+}
+
+/* Social Icons Styling */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--violet-brand);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    color: #888;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    .navbar { flex-direction: column; gap: 15px; }
+    .nav-links { flex-direction: column; gap: 10px; }
+    .brand-tagline { display: none; }
+    .navbar-logo { height: 45px; }
+    .profile-card img { height: 260px; }
+}
+@media (max-width: 768px) {
+    .header {
+        height: 160px;
+        background-size: cover;
+    }
+}

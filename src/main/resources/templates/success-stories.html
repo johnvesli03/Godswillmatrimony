@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+    <title>Success Stories - Matrimony</title>
+</head>
+<body>
+<!-- Header -->
+<th:block th:replace="~{fragments/header :: navbar}"></th:block>
+
+<!-- Page Header -->
+<div class="profile-listing-header">
+    <div class="container">
+        <h1>💑 Success Stories</h1>
+        <p>Real couples who found their perfect match through our platform</p>
+    </div>
+</div>
+
+<!-- Success Stories Section -->
+<section class="success-stories-section" style="padding-top: 40px;">
+    <div class="container">
+        <div class="success-stories-grid">
+            <!-- Success Story Card -->
+            <div class="card success-story-card" th:each="story : ${successStories}">
+                <div class="success-story-image">
+                    <img th:src="${story.imageUrl} ?: '/images/default-couple.jpg'"
+                         th:alt="${story.coupleName}">
+                </div>
+                <div class="success-story-content">
+                    <h3 th:text="${story.coupleName}">Rahul & Priya</h3>
+                    <p th:text="${story.story}">
+                        We found each other through this wonderful platform.
+                        Our families are so happy and we're grateful for this service.
+                        Thank you for helping us start our beautiful journey together!
+                    </p>
+                    <div class="success-story-date"
+                         th:text="'Married on ' + ${#temporals.format(story.marriageDate, 'dd MMMM yyyy')}">
+                        Married on 15 January 2024
+                    </div>
+                    <div class="success-story-location"
+                         th:if="${story.location}"
+                         style="font-size: 12px; color: #999; margin-top: 5px;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${story.location}">Mumbai, India</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="no-results" th:if="${successStories == null || successStories.isEmpty()}">
+                <div class="no-results-icon">💕</div>
+                <h3>More Success Stories Coming Soon!</h3>
+                <p>Check back later to read inspiring love stories</p>
+                <a th:href="@{/}" class="btn btn-primary">Browse Profiles</a>
+            </div>
+        </div>
+
+        <!-- Share Your Story -->
+        <div class="card" style="margin-top: 60px; padding: 40px; text-align: center;">
+            <h2 style="margin-bottom: 15px; color: var(--primary-color);">
+                📝 Share Your Success Story
+            </h2>
+            <p style="color: #666; margin-bottom: 25px;">
+                Found your soulmate through our platform? Share your story and inspire others!
+            </p>
+            <a th:href="@{/submit-story}" class="btn btn-primary">
+                <i class="fas fa-pen"></i> Submit Your Story
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>

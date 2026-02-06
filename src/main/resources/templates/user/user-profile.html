@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+    <title>My Profile - Matrimony</title>
+<!--    <link rel="stylesheet" th:href="@{/css/main.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/home.css}">-->
+    <link rel="stylesheet" th:href="@{/css/my-profile.css}">
+<!--    <link rel="stylesheet" th:href="@{/css/auth.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/pagination.css}">-->
+</head>
+<body>
+<th:block th:replace="~{fragments/header :: navbar}"></th:block>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>My Profile</h1>
+        <a th:href="@{/profile/edit}" class="btn btn-primary">Edit Profile</a>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-image">
+            <img th:src="${profile.imageUrl} ?: '/images/default-avatar.jpg'" alt="Profile">
+        </div>
+
+        <div class="profile-details">
+            <h2 th:text="${profile.firstName + ' ' + profile.lastName}">Name</h2>
+            <p><strong>Age:</strong> <span th:text="${profile.calculatedAge}">25</span>years</p>
+            <p><strong>Gender:</strong> <span th:text="${profile.gender}">Male</span></p>
+            <p><strong>Religion:</strong> <span th:text="${profile.religion}">Hindu</span></p>
+            <p><strong>Education:</strong> <span th:text="${profile.education}">Bachelor</span></p>
+            <p><strong>Profession:</strong> <span th:text="${profile.profession}">Software Engineer</span></p>
+            <p><strong>Location:</strong> <span th:text="${profile.city + ', ' + profile.state}">City, State</span></p>
+            <p><strong>About:</strong> <span th:text="${profile.aboutMe}">Bio</span></p>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>
