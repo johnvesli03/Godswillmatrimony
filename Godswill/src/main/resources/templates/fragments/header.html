@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Matrimony - Find Your Perfect Life Partner'">Matrimony</title>
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/pagination.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body th:fragment="navbar">
+<header class="header">
+    <div class="container">
+        <nav class="navbar">
+            <a th:href="@{/}" class="logo">
+                <img th:src="@{/images/logo.png}" alt="Matrimony Logo" class="navbar-logo">
+                <span class="logo-text">God's Will Matrimony</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a th:href="@{/}" th:classappend="${activePage == 'home'} ? 'active' : ''">Home</a></li>
+                <li><a th:href="@{/profiles}" th:classappend="${activePage == 'profiles'} ? 'active' : ''">Profiles</a></li>
+                <li><a th:href="@{/success-stories}" th:classappend="${activePage == 'stories'} ? 'active' : ''">Success Stories</a></li>
+
+                <li th:if="${session.user != null}">
+                    <a th:href="@{/profile/my-profile}">My Profile</a>
+                </li>
+                <li th:if="${session.user != null}">
+                    <a th:href="@{/logout}" class="btn-logout">Logout</a>
+                </li>
+
+                <li th:if="${session.user == null}">
+                    <a th:href="@{/login}" class="btn-login">Login</a>
+                </li>
+                <li th:if="${session.user == null}">
+                    <a th:href="@{/register}" class="btn-register">Register</a>
+                </li>
+            </ul>
+
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

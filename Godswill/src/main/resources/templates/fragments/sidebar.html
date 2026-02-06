@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside class="sidebar" th:fragment="sidebar">
+    <!-- Bride Profiles -->
+    <a th:href="@{/profiles(gender='female')}" class="category-banner">
+        <div class="category-banner-content">
+            <img src="/images/bride.jpg" alt="Bride Profiles" class="category-banner-image">
+            <h3>👰 Bride Profiles</h3>
+            <p>Browse verified bride profiles</p>
+        </div>
+    </a>
+
+    <!-- Groom Profiles -->
+    <a th:href="@{/profiles(gender='male')}" class="category-banner">
+        <div class="category-banner-content">
+            <img src="/images/groom.jpg" alt="Groom Profiles" class="category-banner-image">
+            <h3>🤵 Groom Profiles</h3>
+            <p>Browse verified groom profiles</p>
+        </div>
+    </a>
+
+    <!-- Verified Profiles -->
+    <a th:href="@{/profiles(verified='true')}" class="category-banner">
+        <div class="category-banner-content">
+            <img src="/images/verified-banner.jpg" alt="Verified Profiles" class="category-banner-image">
+            <h3>✓ Verified Profiles</h3>
+            <p>100% verified mobile profiles</p>
+        </div>
+    </a>
+
+    <!-- Premium Profiles -->
+    <a th:href="@{/profiles(premium='true')}" class="category-banner">
+        <div class="category-banner-content">
+            <img src="/images/premium-banner.jpg" alt="Premium Profiles" class="category-banner-image">
+            <h3>⭐ Premium Profiles</h3>
+            <p>Featured premium members</p>
+        </div>
+    </a>
+
+    <!-- Recent Profiles -->
+    <a th:href="@{/profiles(sort='recent')}" class="category-banner">
+        <div class="category-banner-content">
+            <img src="/images/recent-banner.jpg" alt="Recent Profiles" class="category-banner-image">
+            <h3>🆕 Recent Profiles</h3>
+            <p>Newly registered members</p>
+        </div>
+    </a>
+</aside>
+</body>
+</html>

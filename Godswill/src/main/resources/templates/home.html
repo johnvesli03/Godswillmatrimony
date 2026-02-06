@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/carousel-fix.css}">
+</head>
+<body th:attr="data-logged-in=${session.user != null}">
+
+<th:block th:replace="~{fragments/header :: navbar}"></th:block>
+
+<section class="image-carousel-section" th:if="${carouselImages != null && !carouselImages.isEmpty()}">
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="carousel-track">
+                <div th:each="image, iter : ${carouselImages}"
+                     th:class="${iter.first} ? 'carousel-slide active' : 'carousel-slide'">
+
+                    <img th:src="@{${image.imageUrl}}"
+                         th:alt="${image.title}"
+                         th:data-position="${image.objectPosition ?: 'center center'}"
+                         loading="lazy">
+
+                    <div class="carousel-overlay"></div>
+
+                    <div class="carousel-caption">
+                        <h3 th:text="${image.title}">Title</h3>
+                        <p th:text="${image.description}">Description</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="carousel-btn prev" onclick="moveSlide(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <button class="carousel-btn next" onclick="moveSlide(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="carousel-indicators">
+            <span th:each="image, iter : ${carouselImages}"
+                  th:onclick="'currentSlide(' + ${iter.index} + ')'"
+                  th:class="${iter.first} ? 'indicator active' : 'indicator'"></span>
+        </div>
+    </div>
+</section>
+
+<!--<section class="hero-banner">-->
+<!--    <div class="hero-content">-->
+<!--        <h1>Find Your Perfect Life Partner</h1>-->
+<!--        <p>Join thousands of happy couples who found their soulmate through our platform</p>-->
+<!--        <div class="hero-cta">-->
+<!--            <a th:href="@{/register}" class="btn btn-primary">Register Free</a>-->
+<!--            <a th:href="@{/profiles}" class="btn btn-outline">Browse Profiles</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
+
+<div class="container">
+    <div class="main-layout">
+        <th:block th:replace="~{fragments/sidebar :: sidebar}"></th:block>
+        <main>
+            <div class="filter-bar">
+                <form id="filterForm">
+                    <div class="filter-options">
+                        <div class="filter-group">
+                            <label for="gender">Looking for:</label>
+                            <select id="gender" name="gender" class="form-control">
+                                <option value="">All</option>
+                                <option value="male">Groom</option>
+                                <option value="female">Bride</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="religion">Religion:</label>
+                            <select id="religion" name="religion" class="form-control">
+                                <option value="">All Religions</option>
+                                <option value="christian">Christian</option>
+                                <option value="christian">Converted-Christian</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="ageFrom">Age:</label>
+                            <select id="ageFrom" name="ageFrom" class="form-control">
+                                <option value="">From</option>
+                                <option th:each="age : ${#numbers.sequence(18, 60)}" th:value="${age}" th:text="${age}">18</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <select id="ageTo" name="ageTo" class="form-control">
+                                <option value="">To</option>
+                                <option th:each="age : ${#numbers.sequence(18, 60)}" th:value="${age}" th:text="${age}">60</option>
+                            </select>
+                        </div>
+                        <button type="button" id="resetFilters" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <section class="profile-grid-section">
+                <div class="section-header">
+                    <h2>Featured Profiles</h2>
+                    <a th:href="@{/profiles}" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="profile-grid">
+                    <div class="card profile-card" th:each="profile : ${profiles}">
+                        <div class="profile-card-image">
+                            <img th:src="${profile.imageUrl} ?: '/images/default-avatar.jpg'" th:alt="${profile.name}">
+                        </div>
+                        <div class="profile-card-content">
+                            <h3 th:text="${profile.name} + ', ' + ${profile.age}">Name, 28</h3>
+                            <p th:text="${profile.location}">Location</p>
+                            <a th:href="@{/profile/{id}(id=${profile.id})}" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<section class="success-stories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Success Stories</h2>
+        </div>
+        <div class="success-stories-grid">
+            <div class="card success-story-card" th:each="story : ${successStories}">
+                <div class="success-story-image">
+                    <img th:src="${story.imageUrl} ?: '/images/default-couple.jpg'" th:alt="${story.coupleName}">
+                </div>
+                <div class="success-story-content">
+                    <h3 th:text="${story.coupleName}">Rahul & Priya</h3>
+                    <p th:text="${story.story}">Story details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+<script>
+    // ================= 1. Global Variables =================
+    let currentSlideIndex = 0;
+    let autoSlideInterval;
+    let totalSlides = 0;
+
+    // ================= 2. Carousel & Image Centering =================
+
+    // Fixes the "not in center" issue by reading th:data-position from the database
+    function applyImagePositions() {
+        const images = document.querySelectorAll('.carousel-slide img');
+        images.forEach(img => {
+            const position = img.getAttribute('data-position');
+            if (position && position !== 'null' && position !== '') {
+                img.style.objectPosition = position;
+            } else {
+                img.style.objectPosition = 'center center';
+            }
+        });
+    }
+
+    function showSlide(index) {
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        totalSlides = slides.length;
+
+        if (totalSlides === 0) return;
+
+        // Boundary checks
+        if (index >= totalSlides) {
+            currentSlideIndex = 0;
+        } else if (index < 0) {
+            currentSlideIndex = totalSlides - 1;
+        } else {
+            currentSlideIndex = index;
+        }
+
+        // Toggle active classes for slides
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === currentSlideIndex);
+        });
+
+        // Toggle active classes for dots
+        indicators.forEach((indicator, i) => {
+            if (indicator) indicator.classList.toggle('active', i === currentSlideIndex);
+        });
+    }
+
+    function moveSlide(direction) {
+        stopAutoSlide();
+        showSlide(currentSlideIndex + direction);
+        startAutoSlide();
+    }
+
+    function currentSlide(index) {
+        stopAutoSlide();
+        showSlide(index);
+        startAutoSlide();
+    }
+
+    function startAutoSlide() {
+        if (totalSlides <= 1) return;
+        autoSlideInterval = setInterval(() => {
+            showSlide(currentSlideIndex + 1);
+        }, 5000);
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+
+    // ================= 3. Success Stories Scroll Fade =================
+
+    function showStoriesOnScroll() {
+        const stories = document.querySelectorAll('.success-story-card');
+        const triggerBottom = window.innerHeight * 0.9;
+
+        stories.forEach(story => {
+            const storyTop = story.getBoundingClientRect().top;
+            if(storyTop < triggerBottom) {
+                story.classList.add('visible');
+            }
+        });
+    }
+
+    // ================= 4. Initialization & Event Listeners =================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Carousel
+        totalSlides = document.querySelectorAll('.carousel-slide').length;
+        applyImagePositions(); // Apply dynamic centering
+
+        if (totalSlides > 0) {
+            showSlide(0);
+            startAutoSlide();
+        }
+
+        // Initialize Story Fades
+        showStoriesOnScroll();
+    });
+
+    // Listen for scroll for story animations
+    window.addEventListener('scroll', showStoriesOnScroll);
+
+    // Handle responsiveness
+    window.addEventListener('resize', function() {
+        if (totalSlides > 0) {
+            showSlide(currentSlideIndex);
+        }
+    });
+</script>
+</body>
+</html>
