@@ -48,21 +48,21 @@ public class EmailService {
 
     private String buildOtpEmailBody(String otp) {
         return "Hello,\n\n" +
-                "Your Matrimony Email Verification OTP is:\n\n" +
+                "Your God's Will Matrimony Email Verification OTP is:\n\n" +
                 otp + "\n\n" +
                 "This OTP will expire in 10 minutes.\n\n" +
                 "If you didn't request this OTP, please ignore this email.\n\n" +
                 "Best regards,\n" +
-                "Matrimony Team";
+                "God's Will Matrimony Team";
     }
 
     private String buildWelcomeEmailBody(String firstName) {
         return "Hello " + firstName + ",\n\n" +
-                "Welcome to Matrimony!\n\n" +
+                "Welcome to God's Will Matrimony!\n\n" +
                 "Your account has been successfully created. " +
                 "You can now start exploring profiles and finding your perfect life partner.\n\n" +
-                "Thank you for joining our community.\n\n" +
+                "Thank you for joining and trusting us.\n\n" +
                 "Best regards,\n" +
-                "Matrimony Team";
+                "God's Will Matrimony Team";
     }
 }

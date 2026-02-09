@@ -64,7 +64,7 @@ public class DataInitializer implements CommandLineRunner {
         profile1.setAboutMe("Simple and family-oriented.");
         profile1.setEmail("priya.sharma@example.com");
         profile1.setPhone("+919876543210");
-        profile1.setImageUrl("/images/girl_1.jpg");
+        profile1.setImageUrl("/uploads/girl_1.jpg");
         profile1.setVerified(true);
         profile1.onCreate();
 
@@ -88,7 +88,7 @@ public class DataInitializer implements CommandLineRunner {
         profile2.setAboutMe("Family-oriented person.");
         profile2.setEmail("rahul.patel@example.com");
         profile2.setPhone("+919876543211");
-        profile2.setImageUrl("/images/boy_1.jpg");
+        profile2.setImageUrl("/uploads/boy_1.jpg");
         profile2.setVerified(true);
         profile2.onCreate();
 
