@@ -1,107 +1,104 @@
 package com.Matrimony.Godswill.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Document(collection = "profiles")
+@Entity
+@Table(
+        name = "profiles",
+        indexes = {
+                @Index(name = "idx_profile_user_id", columnList = "userId", unique = true),
+                @Index(name = "idx_profile_gender", columnList = "gender"),
+                @Index(name = "idx_profile_marital_status", columnList = "maritalStatus"),
+                @Index(name = "idx_profile_religion", columnList = "religion"),
+                @Index(name = "idx_profile_city", columnList = "city"),
+                @Index(name = "idx_profile_education", columnList = "education"),
+                @Index(name = "idx_profile_profession", columnList = "profession"),
+                @Index(name = "idx_profile_email", columnList = "email"),
+                @Index(name = "idx_profile_phone", columnList = "phone"),
+                @Index(name = "idx_profile_verified", columnList = "verified")
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {
 
     @Id
-    private String id;
-    @Indexed(unique = true)
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    // Personal Information
+    @Column(unique = true, length = 50)
+    private String profileCode; // e.g. GWM-1, GWM-2
+
+    @Column(unique = true)
+    private Long userId;
+
     private String firstName;
     private String lastName;
 
-    @Indexed
     private String gender;
 
     private LocalDate dateOfBirth;
     private Integer age;
 
-    @Indexed
     private String maritalStatus;
 
     private Integer height;
     private String motherTongue;
 
-    // Religious Information
-    @Indexed
     private String religion;
 
     private String caste;
 
-    // Location Details
     private String country;
     private String state;
 
-    @Indexed
     private String city;
 
     private String pincode;
 
-    // Professional Information
-    @Indexed
     private String education;
 
-    @Indexed
     private String profession;
 
     private String annualIncome;
     private String employedIn;
 
-    // About
+    @Column(columnDefinition = "TEXT")
     private String aboutMe;
 
-    // Contact Information
-    @Indexed
     private String email;
 
-    @Indexed
     private String phone;
 
-    // Profile Image
     private String imageUrl;
 
-    // Status
-    @Indexed
     private Boolean verified = false;
 
     private Boolean active = true;
 
     private Boolean shortlisted = false;
 
-    // Statistics
     private Integer viewCount = 0;
     private String lastActive = "Today";
 
-    // Timestamps
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Helper method to get full name
     public String getName() {
         return firstName + " " + lastName;
     }
 
-    // Helper method to get location
     public String getLocation() {
         return city + ", " + state;
     }
 
-    // Explicit getter for shortlisted
     public Boolean getShortlisted() {
         return shortlisted != null ? shortlisted : false;
     }
@@ -110,7 +107,7 @@ public class Profile {
         this.shortlisted = shortlisted;
     }
 
-    // Pre-persist logic (called on create)
+    @PrePersist
     public void onCreate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
@@ -131,12 +128,13 @@ public class Profile {
             shortlisted = false;
         }
     }
+
     public Integer getCalculatedAge() {
         if (dateOfBirth == null) return null;
         return java.time.Period.between(dateOfBirth, java.time.LocalDate.now()).getYears();
     }
 
-    // Pre-update logic (called on update)
+    @PreUpdate
     public void onUpdate() {
         updatedAt = LocalDateTime.now();
     }

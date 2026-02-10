@@ -69,20 +69,12 @@ public class AuthController {
             User savedUser = userService.registerUser(user);
             System.out.println("👤 User registered: " + savedUser.getId());
 
-            // Send OTP to email ONLY
             System.out.println("📧 Sending email OTP...");
             otpService.sendEmailOtp(user.getEmail());
-
-            // REMOVED: Send OTP to phone
-            // System.out.println("📱 Sending SMS OTP...");
-            // otpService.sendPhoneOtp(user.getPhone());
 
             redirectAttributes.addFlashAttribute("message", "✅ OTP sent to your email!");
             redirectAttributes.addFlashAttribute("userId", savedUser.getId());
             redirectAttributes.addFlashAttribute("email", user.getEmail());
-
-            // REMOVED: phone masking since we are not validating SMS OTP
-            // redirectAttributes.addFlashAttribute("phone", OtpUtil.maskPhone(user.getPhone()));
 
             return "redirect:/verify-otp";
 
@@ -105,14 +97,13 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
-    public String verifyOtp(@RequestParam String userId,
+    public String verifyOtp(@RequestParam Long userId,
                             @RequestParam String email,
                             @RequestParam String emailOtp,
                             RedirectAttributes redirectAttributes) {
         try {
             System.out.println("🔐 Verifying Email OTP...");
 
-            // Verify email OTP ONLY
             otpService.verifyEmailOtp(email, emailOtp);
             System.out.println("✅ Email OTP verified");
 
@@ -120,9 +111,6 @@ public class AuthController {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 user.setEmailVerified(true);
-
-                // REMOVED: phone OTP verification + phoneVerified flag update
-                // user.setPhoneVerified(true);
 
                 userService.updateUser(user);
 
@@ -154,14 +142,10 @@ public class AuthController {
     public Map<String, String> resendOtp(@RequestParam(required = false) String email,
                                          @RequestParam(required = false) String phone) {
         try {
-            // Keep ONLY email resend (optional but recommended)
             if (email != null && !email.isEmpty()) {
                 otpService.sendEmailOtp(email);
                 return Map.of("status", "success", "message", "✅ Email OTP resent");
             }
-
-            // REMOVED: phone resend
-            // else if (phone != null && !phone.isEmpty()) { ... }
 
             return Map.of("status", "error", "message", "❌ Email required");
 

@@ -16,7 +16,6 @@ public class UserService {
 
     public User registerUser(User user) {
         user.onCreate();
-        // In production, hash the password using BCrypt
         return userRepository.save(user);
     }
 
@@ -43,7 +42,7 @@ public class UserService {
         return userRepository.existsByPhone(phone);
     }
 
-    public Optional<User> findById(String id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 

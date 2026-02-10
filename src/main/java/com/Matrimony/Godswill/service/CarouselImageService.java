@@ -4,6 +4,7 @@ import com.Matrimony.Godswill.model.CarouselImage;
 import com.Matrimony.Godswill.repository.CarouselImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class CarouselImageService {
         return carouselImageRepository.findAll();
     }
 
-    public CarouselImage getCarouselImageById(String id) {
+    public CarouselImage getCarouselImageById(Long id) {
         Optional<CarouselImage> image = carouselImageRepository.findById(id);
         return image.orElse(null);
     }
@@ -35,7 +36,7 @@ public class CarouselImageService {
         return carouselImageRepository.save(image);
     }
 
-    public CarouselImage updateCarouselImage(String id, CarouselImage imageDetails) {
+    public CarouselImage updateCarouselImage(Long id, CarouselImage imageDetails) {
         Optional<CarouselImage> existingImage = carouselImageRepository.findById(id);
 
         if (existingImage.isPresent()) {
@@ -58,11 +59,11 @@ public class CarouselImageService {
         return null;
     }
 
-    public void deleteCarouselImage(String id) {
+    public void deleteCarouselImage(Long id) {
         carouselImageRepository.deleteById(id);
     }
 
-    public void toggleCarouselImageActive(String id) {
+    public void toggleCarouselImageActive(Long id) {
         Optional<CarouselImage> image = carouselImageRepository.findById(id);
         if (image.isPresent()) {
             CarouselImage carouselImage = image.get();

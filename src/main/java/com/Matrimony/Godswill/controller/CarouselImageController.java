@@ -5,6 +5,7 @@ import com.Matrimony.Godswill.service.CarouselImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -25,7 +26,7 @@ public class CarouselImageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CarouselImage> getCarouselImageById(@PathVariable String id) {
+    public ResponseEntity<CarouselImage> getCarouselImageById(@PathVariable Long id) {
         CarouselImage image = carouselImageService.getCarouselImageById(id);
         if (image != null) {
             return ResponseEntity.ok(image);
@@ -40,7 +41,7 @@ public class CarouselImageController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CarouselImage> updateCarouselImage(@PathVariable String id,
+    public ResponseEntity<CarouselImage> updateCarouselImage(@PathVariable Long id,
                                                              @RequestBody CarouselImage imageDetails) {
         CarouselImage updatedImage = carouselImageService.updateCarouselImage(id, imageDetails);
         if (updatedImage != null) {
@@ -50,13 +51,13 @@ public class CarouselImageController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCarouselImage(@PathVariable String id) {
+    public ResponseEntity<Void> deleteCarouselImage(@PathVariable Long id) {
         carouselImageService.deleteCarouselImage(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<CarouselImage> toggleCarouselImageActive(@PathVariable String id) {
+    public ResponseEntity<CarouselImage> toggleCarouselImageActive(@PathVariable Long id) {
         carouselImageService.toggleCarouselImageActive(id);
         CarouselImage image = carouselImageService.getCarouselImageById(id);
         return ResponseEntity.ok(image);

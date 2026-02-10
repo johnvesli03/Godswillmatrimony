@@ -12,7 +12,7 @@
 	<artifactId>Godswill</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Godswill</name>
-	<description>Matrimony Website with MongoDB</description>
+	<description>Matrimony Website with MySQL</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -29,10 +29,17 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<!-- MongoDB -->
+		<!-- JPA (MySQL) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- MySQL Driver -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Validation -->
@@ -53,14 +60,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!-- DevTools -->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-devtools</artifactId>-->
-<!--			<scope>runtime</scope>-->
-<!--			<optional>true</optional>-->
-<!--		</dependency>-->
-
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -74,12 +73,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Add this inside <dependencies> -->
+
+		<!-- Twilio -->
 		<dependency>
 			<groupId>com.twilio.sdk</groupId>
 			<artifactId>twilio</artifactId>
 			<version>9.2.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>jakarta.annotation</groupId>
 			<artifactId>jakarta.annotation-api</artifactId>
@@ -94,16 +95,6 @@
 	</dependencies>
 
 	<build>
-<!--		<resources>-->
-<!--			<resource>-->
-<!--				<directory>src/main/resources</directory>-->
-<!--				<includes>-->
-<!--					<include>**/*.properties</include>-->
-<!--					<include>**/*.yml</include>-->
-<!--				</includes>-->
-<!--			</resource>-->
-<!--		</resources>-->
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

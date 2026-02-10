@@ -57,7 +57,7 @@ public class ProfileController {
     }
 
     @GetMapping("/profile/{id}")
-    public String viewProfile(@PathVariable String id, Model model) {
+    public String viewProfile(@PathVariable Long id, Model model) {
 
         Optional<Profile> profile = profileService.getProfileById(id);
         if (profile.isEmpty()) return "redirect:/profiles";

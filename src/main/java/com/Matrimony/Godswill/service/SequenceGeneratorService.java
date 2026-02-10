@@ -1,32 +1,36 @@
 package com.Matrimony.Godswill.service;
 
 import com.Matrimony.Godswill.model.DatabaseSequence;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 public class SequenceGeneratorService {
 
-    private final MongoOperations mongoOperations;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public SequenceGeneratorService(MongoOperations mongoOperations) {
-        this.mongoOperations = mongoOperations;
-    }
-
+    @Transactional
     public long getNextSequence(String seqName) {
-        DatabaseSequence counter = mongoOperations.findAndModify(
-                new Query(where("_id").is(seqName)),
-                new Update().inc("seq", 1),
-                FindAndModifyOptions.options().returnNew(true).upsert(true),
-                DatabaseSequence.class
+        DatabaseSequence sequence = entityManager.find(
+                DatabaseSequence.class,
+                seqName,
+                LockModeType.PESSIMISTIC_WRITE
         );
 
-        // upsert(true) should ensure it's never null, but keeping safe fallback
-        return (counter == null) ? 1 : counter.getSeq();
+        if (sequence == null) {
+            sequence = new DatabaseSequence();
+            sequence.setId(seqName);
+            sequence.setSeq(1);
+            entityManager.persist(sequence);
+            return 1;
+        }
+
+        sequence.setSeq(sequence.getSeq() + 1);
+        entityManager.merge(sequence);
+        return sequence.getSeq();
     }
 }

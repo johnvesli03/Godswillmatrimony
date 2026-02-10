@@ -18,7 +18,6 @@ public class OtpService {
     private static final int MAX_ATTEMPTS = 5;
     private static final int OTP_VALID_MINUTES = 5;
 
-    // In-memory OTP store (email -> otp data)
     private final Map<String, OtpEntry> emailOtpStore = new ConcurrentHashMap<>();
 
     private static class OtpEntry {
@@ -71,9 +70,7 @@ public class OtpService {
             throw new RuntimeException("Invalid OTP. " + remaining + " attempts remaining.");
         }
 
-        // OTP is valid, remove it so it can't be reused
         emailOtpStore.remove(email);
-
         System.out.println("✅ Email OTP verified for: " + email);
         return true;
     }

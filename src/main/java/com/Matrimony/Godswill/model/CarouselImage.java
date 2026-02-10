@@ -1,40 +1,45 @@
 package com.Matrimony.Godswill.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed;
+
 import java.time.LocalDateTime;
 
-@Document(collection = "carousel_images")
+@Entity
+@Table(
+        name = "carousel_images",
+        indexes = {
+                @Index(name = "idx_carousel_display_order", columnList = "displayOrder")
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarouselImage {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String imageUrl;
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Indexed
     private int displayOrder;
 
     private boolean active = true;
 
-    private String objectPosition; // NEW FIELD
+    private String objectPosition;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    // Constructor without ID
     public CarouselImage(String imageUrl, String title, String description, int displayOrder, String objectPosition) {
         this.imageUrl = imageUrl;
         this.title = title;
@@ -42,7 +47,20 @@ public class CarouselImage {
         this.displayOrder = displayOrder;
         this.objectPosition = objectPosition;
         this.active = true;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

@@ -3,14 +3,18 @@ package com.Matrimony.Godswill.service;
 import com.Matrimony.Godswill.model.Profile;
 import com.Matrimony.Godswill.model.User;
 import com.Matrimony.Godswill.repository.ProfileRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +23,7 @@ import java.util.Optional;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final MongoTemplate mongoTemplate;
-
-    // ✅ NEW: sequence generator for GWM-1, GWM-2, ...
+    private final EntityManager entityManager;
     private final SequenceGeneratorService sequenceGeneratorService;
 
     private static final String PROFILE_SEQ = "profile_sequence";
@@ -29,19 +31,15 @@ public class ProfileService {
 
     // ================= CREATE OR UPDATE PROFILE =================
     public Profile createProfile(Profile profile) {
-
-        Optional<Profile> existing =
-                profileRepository.findByUserId(profile.getUserId());
+        Optional<Profile> existing = profileRepository.findByUserId(profile.getUserId());
 
         if (existing.isPresent()) {
-            // UPDATE EXISTING
             profile.setId(existing.get().getId());
+            profile.setProfileCode(existing.get().getProfileCode());
             profile.onUpdate();
         } else {
-            // CREATE NEW
             long next = sequenceGeneratorService.getNextSequence(PROFILE_SEQ);
-            profile.setId(PROFILE_PREFIX + next); // ✅ GWM-1, GWM-2, ...
-
+            profile.setProfileCode(PROFILE_PREFIX + next);
             profile.onCreate();
         }
 
@@ -55,7 +53,7 @@ public class ProfileService {
     }
 
     // ================= GET PROFILE BY ID =================
-    public Optional<Profile> getProfileById(String id) {
+    public Optional<Profile> getProfileById(Long id) {
         Optional<Profile> profile = profileRepository.findById(id);
 
         profile.ifPresent(p -> {
@@ -68,7 +66,7 @@ public class ProfileService {
     }
 
     // ================= GET PROFILE BY USER ID =================
-    public Optional<Profile> getProfileByUserId(String userId) {
+    public Optional<Profile> getProfileByUserId(Long userId) {
         return profileRepository.findByUserId(userId);
     }
 
@@ -87,56 +85,60 @@ public class ProfileService {
                                         Integer ageFrom, Integer ageTo,
                                         String maritalStatus, String education) {
 
-        Query query = new Query();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Profile> cq = cb.createQuery(Profile.class);
+        Root<Profile> root = cq.from(Profile.class);
+
+        List<Predicate> predicates = new ArrayList<>();
 
         if (gender != null && !gender.isEmpty()) {
-            query.addCriteria(Criteria.where("gender").is(gender));
+            predicates.add(cb.equal(root.get("gender"), gender));
         }
 
         if (religion != null && !religion.isEmpty()) {
-            query.addCriteria(Criteria.where("religion").is(religion));
+            predicates.add(cb.equal(root.get("religion"), religion));
         }
 
         if (verified != null) {
-            query.addCriteria(Criteria.where("verified").is(verified));
+            predicates.add(cb.equal(root.get("verified"), verified));
         }
 
         if (ageFrom != null) {
-            query.addCriteria(Criteria.where("age").gte(ageFrom));
+            predicates.add(cb.greaterThanOrEqualTo(root.get("age"), ageFrom));
         }
 
         if (ageTo != null) {
-            query.addCriteria(Criteria.where("age").lte(ageTo));
+            predicates.add(cb.lessThanOrEqualTo(root.get("age"), ageTo));
         }
 
         if (maritalStatus != null && !maritalStatus.isEmpty()) {
-            query.addCriteria(Criteria.where("maritalStatus").is(maritalStatus));
+            predicates.add(cb.equal(root.get("maritalStatus"), maritalStatus));
         }
 
         if (education != null && !education.isEmpty()) {
-            query.addCriteria(Criteria.where("education").is(education));
+            predicates.add(cb.equal(root.get("education"), education));
         }
 
-        query.addCriteria(Criteria.where("active").is(true));
+        predicates.add(cb.equal(root.get("active"), true));
 
-        return mongoTemplate.find(query, Profile.class);
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        TypedQuery<Profile> query = entityManager.createQuery(cq);
+        return query.getResultList();
     }
 
     // ================= AUTO CREATE AFTER REGISTRATION =================
     public Profile createProfileForUser(User user) {
-
-        Optional<Profile> existing =
-                profileRepository.findByUserId(user.getId());
+        Optional<Profile> existing = profileRepository.findByUserId(user.getId());
 
         if (existing.isPresent()) {
-            return existing.get(); // already exists
+            return existing.get();
         }
 
         Profile profile = new Profile();
 
-        // ✅ IMPORTANT: also assign the custom ID here, because this method creates a profile too
         long next = sequenceGeneratorService.getNextSequence(PROFILE_SEQ);
-        profile.setId(PROFILE_PREFIX + next);
+        profile.setProfileCode(PROFILE_PREFIX + next);
 
         profile.setUserId(user.getId());
         profile.setFirstName(user.getFirstName());

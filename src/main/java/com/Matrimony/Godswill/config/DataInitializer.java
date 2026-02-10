@@ -4,6 +4,7 @@ import com.Matrimony.Godswill.model.Profile;
 import com.Matrimony.Godswill.model.SuccessStory;
 import com.Matrimony.Godswill.repository.ProfileRepository;
 import com.Matrimony.Godswill.repository.SuccessStoryRepository;
+import com.Matrimony.Godswill.service.SequenceGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,13 +18,16 @@ public class DataInitializer implements CommandLineRunner {
 
     private final ProfileRepository profileRepository;
     private final SuccessStoryRepository successStoryRepository;
+    private final SequenceGeneratorService sequenceGeneratorService;
+
+    private static final String PROFILE_SEQ = "profile_sequence";
+    private static final String PROFILE_PREFIX = "GWM-";
 
     @Override
     public void run(String... args) {
 
         System.out.println("🌱 Checking DB before seeding...");
 
-        // ONLY SEED IF EMPTY
         if (profileRepository.count() == 0) {
             createSampleProfiles();
             System.out.println("✅ Sample Profiles Added");
@@ -45,6 +49,7 @@ public class DataInitializer implements CommandLineRunner {
     private void createSampleProfiles() {
 
         Profile profile1 = new Profile();
+        profile1.setProfileCode(PROFILE_PREFIX + sequenceGeneratorService.getNextSequence(PROFILE_SEQ));
         profile1.setFirstName("Elisa");
         profile1.setLastName("Hope");
         profile1.setGender("female");
@@ -69,6 +74,7 @@ public class DataInitializer implements CommandLineRunner {
         profile1.onCreate();
 
         Profile profile2 = new Profile();
+        profile2.setProfileCode(PROFILE_PREFIX + sequenceGeneratorService.getNextSequence(PROFILE_SEQ));
         profile2.setFirstName("Mathew");
         profile2.setLastName("Hai");
         profile2.setGender("male");
